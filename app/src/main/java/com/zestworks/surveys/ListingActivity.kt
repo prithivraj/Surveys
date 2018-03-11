@@ -9,6 +9,7 @@ import android.view.View
 import com.zestworks.surveys.di.AppComponentProvider
 import com.zestworks.surveys.viewmodels.SurveysViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_listing.*
 
@@ -16,6 +17,7 @@ class ListingActivity : AppCompatActivity() {
 
     private lateinit var surveysViewModel: SurveysViewModel
     private lateinit var recyclerAdapter: RecyclerAdapter
+    private lateinit var networkRequestDisposible: Disposable
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,7 +32,21 @@ class ListingActivity : AppCompatActivity() {
 
         surveysViewModel = ViewModelProviders.of(this).get(SurveysViewModel::class.java)
         AppComponentProvider.instance.appComponentInstance.inject(surveysViewModel)
-        surveysViewModel.load().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe({
+
+        refresh.setOnClickListener({
+            loader.visibility = View.VISIBLE
+            if (!networkRequestDisposible.isDisposed) {
+                networkRequestDisposible.dispose()
+            }
+            recyclerAdapter.surveyDataList = ArrayList()
+            recyclerAdapter.notifyDataSetChanged()
+            loadSurveys()
+        })
+        loadSurveys()
+    }
+
+    private fun loadSurveys() {
+        networkRequestDisposible = surveysViewModel.load().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe({
             loader.visibility = View.GONE
             recycler_view.visibility = View.VISIBLE
             recyclerAdapter.surveyDataList = it.toList()
