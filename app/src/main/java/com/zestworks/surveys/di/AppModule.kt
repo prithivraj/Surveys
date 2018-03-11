@@ -5,6 +5,7 @@ import com.zestworks.surveys.api.SurveyApi
 import dagger.Module
 import dagger.Provides
 import retrofit2.Retrofit
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 
 @Module
@@ -17,6 +18,7 @@ class AppModule(private val context: Context) {
         return Retrofit.Builder()
                 .addConverterFactory(GsonConverterFactory.create())
                 .baseUrl("https://nimbl3-survey-api.herokuapp.com")
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .build()
     }
 
