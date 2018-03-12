@@ -47,9 +47,12 @@ class ListingActivity : AppCompatActivity() {
 
     private fun loadSurveys() {
         networkRequestDisposible = surveysViewModel.load().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe({
+            if (it.isEmpty()) {
+                return@subscribe
+            }
             loader.visibility = View.GONE
             recycler_view.visibility = View.VISIBLE
-            recyclerAdapter.surveyDataList = it.toList()
+            recyclerAdapter.surveyDataList = it
             recyclerAdapter.notifyDataSetChanged()
         })
     }
