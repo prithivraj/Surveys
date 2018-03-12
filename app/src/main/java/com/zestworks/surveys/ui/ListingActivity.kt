@@ -1,4 +1,4 @@
-package com.zestworks.surveys
+package com.zestworks.surveys.ui
 
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.PagerSnapHelper
 import android.view.View
+import com.zestworks.surveys.R
 import com.zestworks.surveys.di.AppComponentProvider
 import com.zestworks.surveys.viewmodels.SurveysViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -26,9 +27,9 @@ class ListingActivity : AppCompatActivity() {
         recycler_view.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         recyclerAdapter = RecyclerAdapter()
         recycler_view.adapter = recyclerAdapter
-
         val pagerSnapHelper = PagerSnapHelper()
         pagerSnapHelper.attachToRecyclerView(recycler_view)
+        recycler_view.addItemDecoration(PageIndicator(this))
 
         surveysViewModel = ViewModelProviders.of(this).get(SurveysViewModel::class.java)
         AppComponentProvider.instance.appComponentInstance.inject(surveysViewModel)
@@ -38,18 +39,14 @@ class ListingActivity : AppCompatActivity() {
             if (!networkRequestDisposible.isDisposed) {
                 networkRequestDisposible.dispose()
             }
-            recyclerAdapter.surveyDataList = ArrayList()
-            recyclerAdapter.notifyDataSetChanged()
             loadSurveys()
         })
+
         loadSurveys()
     }
 
     private fun loadSurveys() {
         networkRequestDisposible = surveysViewModel.load().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe({
-            if (it.isEmpty()) {
-                return@subscribe
-            }
             loader.visibility = View.GONE
             recycler_view.visibility = View.VISIBLE
             recyclerAdapter.surveyDataList = it

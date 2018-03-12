@@ -1,4 +1,4 @@
-package com.zestworks.surveys
+package com.zestworks.surveys.ui
 
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import com.squareup.picasso.Picasso
+import com.zestworks.surveys.R
 import com.zestworks.surveys.model.SurveyData
 
 class RecyclerAdapter : RecyclerView.Adapter<RecyclerHolder>() {

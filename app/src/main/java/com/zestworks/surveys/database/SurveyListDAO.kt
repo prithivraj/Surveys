@@ -18,4 +18,7 @@ interface SurveyListDAO {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun addAllSurveys(survey: List<SurveyData>)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun addSurvey(survey: SurveyData)
 }
