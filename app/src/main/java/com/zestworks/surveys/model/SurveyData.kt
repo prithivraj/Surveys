@@ -2,12 +2,9 @@ package com.zestworks.surveys.model
 
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.PrimaryKey
-import android.arch.persistence.room.TypeConverters
 import com.google.gson.annotations.SerializedName
-import com.zestworks.surveys.database.Converters
 
 @Entity
-@TypeConverters(Converters::class)
 data class SurveyData(
 		@PrimaryKey @SerializedName("id") var id: String = "",
 		@SerializedName("title") var title: String = "",
