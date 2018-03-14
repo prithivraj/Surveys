@@ -11,9 +11,10 @@ import android.view.ViewGroup
 import com.zestworks.surveys.R
 import com.zestworks.surveys.auth.AuthenticatorAPI
 import com.zestworks.surveys.di.AppComponentProvider
+import com.zestworks.surveys.viewmodels.ProgressBarStatus
 import com.zestworks.surveys.viewmodels.SurveysViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_listing.*
 import javax.inject.Inject
@@ -23,7 +24,7 @@ class SurveyListFragment : Fragment() {
 
     private lateinit var surveysViewModel: SurveysViewModel
     private lateinit var recyclerAdapter: RecyclerAdapter
-    private lateinit var networkRequestDisposible: Disposable
+    private var subscriptionsWithViewModel = CompositeDisposable()
 
     @Inject
     lateinit var authenticatorAPI: AuthenticatorAPI
@@ -32,8 +33,9 @@ class SurveyListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         recycler_view.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         recyclerAdapter = RecyclerAdapter({
-            if (!networkRequestDisposible.isDisposed) {
-                networkRequestDisposible.dispose()
+            if (!subscriptionsWithViewModel.isDisposed) {
+                subscriptionsWithViewModel.dispose()
+                subscriptionsWithViewModel = CompositeDisposable()
             }
             surveysViewModel.takeSurveyClicked(it)
             val singleSurveyFragment = SingleSurveyFragment()
@@ -51,13 +53,12 @@ class SurveyListFragment : Fragment() {
 
         authenticatorAPI.performSignIn({
             refresh.setOnClickListener({
-                loader?.visibility = View.VISIBLE
-                if (!networkRequestDisposible.isDisposed) {
-                    networkRequestDisposible.dispose()
+                if (!subscriptionsWithViewModel.isDisposed) {
+                    subscriptionsWithViewModel.dispose()
+                    subscriptionsWithViewModel = CompositeDisposable()
                 }
                 loadSurveys()
             })
-
             loadSurveys()
         })
     }
@@ -69,13 +70,19 @@ class SurveyListFragment : Fragment() {
     }
 
     private fun loadSurveys() {
-        networkRequestDisposible = surveysViewModel.getSurveyListStream().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe({
+        subscriptionsWithViewModel.add(surveysViewModel.getLoaderStateStream().observeOn(AndroidSchedulers.mainThread()).subscribe({
+            when (it) {
+                ProgressBarStatus.LOADING -> loader?.visibility = View.VISIBLE
+                ProgressBarStatus.LOADED -> loader?.visibility = View.GONE
+            }
+        }))
+
+        subscriptionsWithViewModel.add(surveysViewModel.getSurveyListStream().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe({
             if (it.isEmpty()) {
                 return@subscribe
             }
-            loader?.visibility = View.GONE
             recyclerAdapter.surveyDataList = it
             recyclerAdapter.notifyDataSetChanged()
-        })
+        }))
     }
 }
