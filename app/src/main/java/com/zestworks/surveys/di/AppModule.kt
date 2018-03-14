@@ -73,6 +73,6 @@ class AppModule(private val context: Context) {
     @Provides
     @PerApp
     fun provideAuthenticator(): AuthenticatorAPI {
-        return AuthenticatorImpl()
+        return AuthenticatorImpl(context.getSharedPreferences("nukes.bin", Context.MODE_PRIVATE))
     }
 }
