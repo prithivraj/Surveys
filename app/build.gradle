@@ -85,4 +85,7 @@ dependencies {
 
     // Mockito
     testCompile group: 'org.mockito', name: 'mockito-all', version: '1.10.19'
+
+    // ktx
+    implementation 'androidx.core:core-ktx:0.2'
 }
