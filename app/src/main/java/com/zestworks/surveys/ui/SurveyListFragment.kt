@@ -52,7 +52,6 @@ class SurveyListFragment : Fragment() {
         authenticatorAPI.performSignIn({
             refresh.setOnClickListener({
                 loader?.visibility = View.VISIBLE
-                recycler_view.visibility = View.INVISIBLE
                 if (!networkRequestDisposible.isDisposed) {
                     networkRequestDisposible.dispose()
                 }
@@ -75,7 +74,6 @@ class SurveyListFragment : Fragment() {
                 return@subscribe
             }
             loader?.visibility = View.GONE
-            recycler_view?.visibility = View.VISIBLE
             recyclerAdapter.surveyDataList = it
             recyclerAdapter.notifyDataSetChanged()
         })
