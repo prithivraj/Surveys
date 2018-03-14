@@ -1,10 +1,11 @@
 package com.zestworks.surveys.viewmodels
 
 import android.arch.lifecycle.ViewModel
-import com.jakewharton.rxrelay2.PublishRelay
+import com.jakewharton.rxrelay2.BehaviorRelay
 import com.zestworks.surveys.model.SurveyData
 import com.zestworks.surveys.repository.SurveyRepository
 import io.reactivex.Flowable
+import io.reactivex.Observable
 import javax.inject.Inject
 
 
@@ -13,7 +14,7 @@ class SurveysViewModel : ViewModel() {
     @Inject
     lateinit var repository: SurveyRepository
 
-    private val singleSurveyStream: PublishRelay<SurveyData> = PublishRelay.create<SurveyData>()
+    private val singleSurveyStream: BehaviorRelay<SurveyData> = BehaviorRelay.create()
 
     private var data: List<SurveyData>? = null
 
@@ -24,7 +25,7 @@ class SurveysViewModel : ViewModel() {
         }
     }
 
-    fun getSingleDisplayStream(): PublishRelay<SurveyData> {
+    fun getSingleDisplayStream(): Observable<SurveyData> {
         return singleSurveyStream
     }
 

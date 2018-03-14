@@ -18,6 +18,7 @@ import kotlinx.android.synthetic.main.activity_listing.*
 
 
 class SurveyListFragment : Fragment() {
+
     private lateinit var surveysViewModel: SurveysViewModel
     private lateinit var recyclerAdapter: RecyclerAdapter
     private lateinit var networkRequestDisposible: Disposable
@@ -29,12 +30,11 @@ class SurveyListFragment : Fragment() {
             if (!networkRequestDisposible.isDisposed) {
                 networkRequestDisposible.dispose()
             }
+            surveysViewModel.event_takeSurvey(it)
             val singleSurveyFragment = SingleSurveyFragment()
-            val bundle = Bundle()
-            bundle.putInt("surveyIndex", it)
-            singleSurveyFragment.arguments = bundle
             activity!!.supportFragmentManager.beginTransaction().replace(R.id.container, singleSurveyFragment).addToBackStack(null).commit()
         })
+
         recycler_view.adapter = recyclerAdapter
         val pagerSnapHelper = PagerSnapHelper()
         pagerSnapHelper.attachToRecyclerView(recycler_view)

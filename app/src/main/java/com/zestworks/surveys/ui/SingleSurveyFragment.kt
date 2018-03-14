@@ -21,7 +21,6 @@ class SingleSurveyFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         surveysViewModel = ViewModelProviders.of(activity!!).get(SurveysViewModel::class.java)
-        bindToDataStreams()
         return inflater.inflate(R.layout.fragment_single_survey, container, false)
     }
 
@@ -34,8 +33,7 @@ class SingleSurveyFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val index = arguments!!.getInt("surveyIndex")
-        surveysViewModel.event_takeSurvey(index)
+        bindToDataStreams()
     }
 
     override fun onDestroy() {
