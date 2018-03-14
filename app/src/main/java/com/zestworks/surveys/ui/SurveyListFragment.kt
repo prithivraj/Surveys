@@ -35,7 +35,7 @@ class SurveyListFragment : Fragment() {
             if (!networkRequestDisposible.isDisposed) {
                 networkRequestDisposible.dispose()
             }
-            surveysViewModel.event_takeSurvey(it)
+            surveysViewModel.takeSurveyClicked(it)
             val singleSurveyFragment = SingleSurveyFragment()
             activity!!.supportFragmentManager.beginTransaction().replace(R.id.container, singleSurveyFragment).addToBackStack(null).commit()
         })
@@ -69,7 +69,7 @@ class SurveyListFragment : Fragment() {
     }
 
     private fun loadSurveys() {
-        networkRequestDisposible = surveysViewModel.load().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe({
+        networkRequestDisposible = surveysViewModel.getSurveyListStream().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe({
             if (it.isEmpty()) {
                 return@subscribe
             }

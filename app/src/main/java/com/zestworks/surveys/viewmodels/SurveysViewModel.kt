@@ -18,18 +18,18 @@ class SurveysViewModel : ViewModel() {
 
     private var data: List<SurveyData>? = null
 
-    fun load(): Flowable<List<SurveyData>> {
+    fun getSurveyListStream(): Flowable<List<SurveyData>> {
         return repository.getSurveyList().map {
             data = it
             return@map it
         }
     }
 
-    fun getSingleDisplayStream(): Observable<SurveyData> {
+    fun getSingleSurveyStream(): Observable<SurveyData> {
         return singleSurveyStream
     }
 
-    fun event_takeSurvey(index: Int) {
+    fun takeSurveyClicked(index: Int) {
         singleSurveyStream.accept(data?.get(index))
     }
 
