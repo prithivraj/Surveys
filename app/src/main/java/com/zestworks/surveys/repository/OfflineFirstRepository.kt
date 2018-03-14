@@ -1,6 +1,5 @@
 package com.zestworks.surveys.repository
 
-import com.zestworks.surveys.BuildConfig
 import com.zestworks.surveys.api.SurveyApi
 import com.zestworks.surveys.database.SurveyListDatabase
 import com.zestworks.surveys.model.SurveyData
@@ -14,7 +13,7 @@ class OfflineFirstRepository(private val surveyApi: SurveyApi, private val surve
 
     override fun getSurveyList(): Flowable<List<SurveyData>> {
         return surveyDatabase.surveyListDAO().getSurveys().doOnSubscribe {
-            surveyApi.getAllSurveys(BuildConfig.ACCESSTOKEN).subscribeOn(Schedulers.io()).subscribe(object : Observer<Array<SurveyData>> {
+            surveyApi.getAllSurveys().subscribeOn(Schedulers.io()).subscribe(object : Observer<Array<SurveyData>> {
                 override fun onComplete() {
                     //TODO Wrap getSurveyList's return type as a state object and supply error states along with data.
                 }
