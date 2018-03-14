@@ -9,12 +9,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.zestworks.surveys.R
+import com.zestworks.surveys.auth.AuthenticatorAPI
 import com.zestworks.surveys.di.AppComponentProvider
 import com.zestworks.surveys.viewmodels.SurveysViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_listing.*
+import javax.inject.Inject
 
 
 class SurveyListFragment : Fragment() {
@@ -22,6 +24,9 @@ class SurveyListFragment : Fragment() {
     private lateinit var surveysViewModel: SurveysViewModel
     private lateinit var recyclerAdapter: RecyclerAdapter
     private lateinit var networkRequestDisposible: Disposable
+
+    @Inject
+    lateinit var authenticatorAPI: AuthenticatorAPI
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -42,17 +47,20 @@ class SurveyListFragment : Fragment() {
 
         surveysViewModel = ViewModelProviders.of(activity!!).get(SurveysViewModel::class.java)
         AppComponentProvider.instance.appComponentInstance.inject(surveysViewModel)
+        AppComponentProvider.instance.appComponentInstance.inject(this)
 
-        refresh.setOnClickListener({
-            loader?.visibility = View.VISIBLE
-            recycler_view.visibility = View.INVISIBLE
-            if (!networkRequestDisposible.isDisposed) {
-                networkRequestDisposible.dispose()
-            }
+        authenticatorAPI.performSignIn({
+            refresh.setOnClickListener({
+                loader?.visibility = View.VISIBLE
+                recycler_view.visibility = View.INVISIBLE
+                if (!networkRequestDisposible.isDisposed) {
+                    networkRequestDisposible.dispose()
+                }
+                loadSurveys()
+            })
+
             loadSurveys()
         })
-
-        loadSurveys()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
