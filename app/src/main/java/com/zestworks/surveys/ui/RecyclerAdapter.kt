@@ -27,7 +27,7 @@ class RecyclerAdapter(var takeSurvey: (Int) -> Unit) : RecyclerView.Adapter<Recy
         holder.take_survey.setOnClickListener({
             takeSurvey.invoke(position)
         })
-        Picasso.get().load(surveyData.coverImageUrl).into(holder.surveyBackground)
+        Picasso.get().load(surveyData.coverImageUrl.plus("l")).into(holder.surveyBackground)
     }
 
     override fun getItemCount(): Int {
