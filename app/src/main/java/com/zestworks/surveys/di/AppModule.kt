@@ -2,8 +2,9 @@ package com.zestworks.surveys.di
 
 import android.arch.persistence.room.Room
 import android.content.Context
-import com.zestworks.surveys.BuildConfig
 import com.zestworks.surveys.api.SurveyApi
+import com.zestworks.surveys.auth.AuthenticatorAPI
+import com.zestworks.surveys.auth.AuthenticatorImpl
 import com.zestworks.surveys.database.SurveyListDatabase
 import com.zestworks.surveys.repository.OfflineFirstRepository
 import com.zestworks.surveys.repository.SurveyRepository
@@ -51,7 +52,7 @@ class AppModule(private val context: Context) {
 
     @Provides
     @PerApp
-    fun provideOkttpClient(): OkHttpClient {
+    fun provideOkttpClient(authenticatorAPI: AuthenticatorAPI): OkHttpClient {
         val httpClient = OkHttpClient.Builder()
         httpClient.addInterceptor {
 
@@ -59,7 +60,7 @@ class AppModule(private val context: Context) {
             val originalHttpUrl = original.url()
 
             val url = originalHttpUrl.newBuilder()
-                    .addQueryParameter("access_token", BuildConfig.ACCESSTOKEN)
+                    .addQueryParameter("access_token", authenticatorAPI.getToken())
                     .build()
 
             val requestBuilder = original.newBuilder().url(url)
@@ -67,5 +68,11 @@ class AppModule(private val context: Context) {
             return@addInterceptor it.proceed(request)
         }
         return httpClient.build()
+    }
+
+    @Provides
+    @PerApp
+    fun provideAuthenticator(): AuthenticatorAPI {
+        return AuthenticatorImpl()
     }
 }
