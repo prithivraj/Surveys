@@ -26,7 +26,7 @@ class SingleSurveyFragment : Fragment() {
     }
 
     private fun bindToDataStreams() {
-        disposable = surveysViewModel.getSingleDisplayStream().subscribe({
+        disposable = surveysViewModel.getSingleSurveyStream().subscribe({
             single_title?.text = it.title
             single_description?.text = it.description
         })

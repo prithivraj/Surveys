@@ -44,7 +44,7 @@ class SurveyViewModelTest {
 
     @Test
     fun testGetSurveyList_emitsCorrectly() {
-        val testObserver = viewModel.load().test()
+        val testObserver = viewModel.getSurveyListStream().test()
         testObserver.assertNoErrors()
         testObserver.values()[0] shouldBe surveyList
     }
@@ -52,9 +52,9 @@ class SurveyViewModelTest {
     @Test
     fun testSingleSurvey_emitsCorrectSurvey() {
         val selectedIndex = 0
-        viewModel.load().subscribe()
-        val testSingleSurveyObserver = viewModel.getSingleDisplayStream().test()
-        viewModel.event_takeSurvey(selectedIndex)
+        viewModel.getSurveyListStream().subscribe()
+        val testSingleSurveyObserver = viewModel.getSingleSurveyStream().test()
+        viewModel.takeSurveyClicked(selectedIndex)
         testSingleSurveyObserver.assertNoErrors()
         testSingleSurveyObserver.values()[selectedIndex] shouldBe surveyList[selectedIndex]
     }
