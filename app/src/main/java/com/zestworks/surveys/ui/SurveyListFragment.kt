@@ -57,6 +57,7 @@ class SurveyListFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
+        retainInstance = true
         return inflater.inflate(R.layout.activity_listing, container, false)
     }
 
