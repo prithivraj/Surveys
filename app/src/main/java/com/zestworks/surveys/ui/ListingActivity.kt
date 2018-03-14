@@ -9,6 +9,8 @@ class ListingActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_listing)
-        supportFragmentManager.beginTransaction().replace(R.id.container, SurveyListFragment()).commitNow()
+        if (savedInstanceState == null) {
+            supportFragmentManager.beginTransaction().replace(R.id.container, SurveyListFragment()).commitNow()
+        }
     }
 }
