@@ -59,4 +59,14 @@ class SurveyViewModelTest {
         testSingleSurveyObserver.values()[selectedIndex] shouldBe surveyList[selectedIndex]
     }
 
+    @Test
+    fun testGetSurveyList_loaderDismissesCorrectly() {
+        val testObserver = viewModel.getLoaderStateStream().test()
+        viewModel.getSurveyListStream().subscribe()
+        testObserver.assertNoErrors()
+        testObserver.values()[0] shouldBe ProgressBarStatus.LOADING
+        testObserver.values()[1] shouldBe ProgressBarStatus.LOADED
+        testObserver.values().count() shouldBe 2
+    }
+
 }
